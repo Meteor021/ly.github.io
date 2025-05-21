@@ -124,16 +124,24 @@
         // 初始化加载数据
         async function loadData() {
             try {
-                const response = await fetch('data.csv');
-                if (!response.ok) throw new Error('数据加载失败');
+                const repoPath = 'Meteor021.github.io/distributor-system/data.csv';
+                const response = await fetch(repoPath);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 
                 const text = await response.text();
+                if (!text) throw new Error('空数据文件');
+                
+                // 更新本地存储和界面
                 localStorage.setItem('csvData', text);
-                localStorage.setItem('lastUpdated', new Date().toLocaleString());
                 updateTable(text);
                 document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+                
             } catch (error) {
-                alert('数据加载失败：' + error.message);
+                console.error('加载失败:', error);
+                alert(`数据加载失败：${error.message}\n请检查浏览器控制台`);
             }
         }
 
